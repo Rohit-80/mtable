@@ -1,0 +1,97 @@
+
+<div id="main">
+
+
+<div id="filter-section"   [formGroup]="dateFilterForm"  >
+    
+
+<mat-form-field appearance="fill">
+    <mat-label>Search</mat-label>
+    <input matInput (keyup)="applyFilter($event)" formControlName="textfilter" placeholder="Ex. 2024...." #input  >
+   
+
+     <button matSuffix mat-icon-button color="accent"  (click)="reset(dateFilterForm.controls.textfilter)" aria-label="Example icon button with a plus one icon"  >
+        <mat-icon>delete</mat-icon>
+      </button>
+  </mat-form-field>
+
+  <mat-form-field color="accent" appearance="fill">
+  <mat-label>Date 1</mat-label>
+  <input matInput [matDatepicker]="picker1" (dateInput)="applyDateFilter($event)" formControlName="from" >
+  
+  <mat-hint>MM/DD/YYYY</mat-hint>
+  <mat-datepicker-toggle matSuffix [for]="picker1" ></mat-datepicker-toggle>
+  <button matSuffix mat-icon-button color="accent" aria-label="Example icon button with a plus one icon" (click)="reset(dateFilterForm.controls.from)" >
+    <mat-icon>delete</mat-icon>
+  </button>
+  <mat-datepicker #picker1 ></mat-datepicker>
+</mat-form-field>
+
+
+
+<mat-form-field color="accent" appearance="fill" >
+  <mat-label>Date 2</mat-label>
+  <input matInput [matDatepicker]="picker2" (dateInput)="applyDateFilter2($event)"  formControlName="to"   >
+
+  <mat-hint *ngIf="!dateFilterForm.errors?.['err']">MM/DD/YYYY</mat-hint>
+  <mat-hint *ngIf="dateFilterForm.errors?.['err']" style="color: red;" > invalid date </mat-hint>
+  <!-- <h1 > invalid </h1> -->
+ 
+
+  <mat-datepicker-toggle matSuffix [for]="picker2" [disabled]="isDisable"></mat-datepicker-toggle>
+  <mat-datepicker #picker2 color="primary" [disabled]="isDisable" ></mat-datepicker>
+  <button matSuffix mat-icon-button [disabled]="isDisable" color="accent" (click)="reset(dateFilterForm.controls.to)" aria-label="Example icon button with a plus one icon">
+    <mat-icon>delete</mat-icon>
+  </button>
+ 
+</mat-form-field>
+
+</div>
+
+<div id="mtable" class="example-container mat-elevation-z8">
+    <div class="example-loading-shade"
+         *ngIf="isLoadingResults || isRateLimitReached">
+      <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+      <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
+        GitHub's API rate limit has been reached. It will be reset in one minute.
+      </div>
+    </div>
+  
+    <div class="example-table-container">
+  
+        <mat-table [dataSource]="data" class="mat-elevation-z8"   matSort matSortActive="created" matSortDisableClear matSortDirection="desc" >
+            <!-- Position Column -->
+            <ng-container matColumnDef="number">
+              <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.number}} </mat-cell>
+            </ng-container>
+          
+            <!-- Name Column -->
+            <ng-container [sticky]="true" matColumnDef="title">
+              <mat-header-cell  *matHeaderCellDef> Title </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
+            </ng-container>
+          
+            <!-- Weight Column -->
+            <ng-container matColumnDef="state">
+              <mat-header-cell *matHeaderCellDef> State </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.state}} </mat-cell>
+            </ng-container>
+          
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="created">
+              <mat-header-cell *matHeaderCellDef mat-sort-header disableClear > Created</mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.created_at | date}} </mat-cell>
+            </ng-container>
+          
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+
+
+     
+  
+   
+  </div>
+  <mat-paginator [length]="resultsLength" [pageSize]="30" aria-label="Select page of GitHub search results"></mat-paginator>
+</div>
